@@ -1,51 +1,57 @@
-#include<sys/types.h>
-#include<sys/stat.h>
-#include<stdio.h>
-int main()
-{
-mode_t oldMask,newMask;
-oldMask=umask((mode_t)0);
-printf("\n Old mask = %o",(int)oldMask);
-if(oldMask & S_IRGRP){
-printf("\nChanging group read permission from Masked to unmasked.n");
-oldMask=(oldMask ^ S_IRGRP);/* ^ Operator is binar XOR  operator, copies the bit if it is set in one operand but not in both. Exclusive or is a logical operator that outputs true only when inputs differ*/
+#include <stdio.h>
+#include <time.h>
+
+typedef struct {
+    int id;
+    char name[50];
+} Student;
+
+void merge(Student arr[], int l, int m, int r) {
+    int n1 = m - l + 1, n2 = r - m;
+    Student L[n1], R[n2];
+    for (int i = 0; i < n1; i++) L[i] = arr[l + i];
+    for (int j = 0; j < n2; j++) R[j] = arr[m + 1 + j];
+
+    int i = 0, j = 0, k = l;
+    while (i < n1 && j < n2) arr[k++] = (L[i].id <= R[j].id) ? L[i++] : R[j++];
+    while (i < n1) arr[k++] = L[i++];
+    while (j < n2) arr[k++] = R[j++];
 }
 
-newMask=(oldMask|S_IWGRP|S_IXGRP);
-umask(newMask);
-printf("\nNew MAsk = %o",(int)newMask);
-printf("\nThe file mode creation mask now specifies:");
-printf("\n  Group read permission  UNMASKED");
-printf("\n  Group write permission  MASKED");
-printf("\n  Group execute permission  MASKED");
-
-oldMask=umask((mode_t)0);
-printf("\n Old mask = %o",(int)oldMask);
-
-if(oldMask & S_IRUSR){
-printf("\nChanging user read permission from Masked to unmasked.n");
-oldMask=(oldMask ^ S_IRUSR);
+void mergeSort(Student arr[], int l, int r) {
+    if (l < r) {
+        int m = l + (r - l) / 2;
+        mergeSort(arr, l, m);
+        mergeSort(arr, m + 1, r);
+        merge(arr, l, m, r);
+    }
 }
-newMask=(oldMask|S_IWUSR|S_IXUSR);
-umask(newMask);
-printf("\nNew MAsk = %o",(int)newMask);
-printf("\nThe file mode creation mask now specifies:");
-printf("\n  User read permission  UNMASKEDn");
-printf("\n  User write permission  MASKEDn");
-printf("\n  User execute permission  MASKEDn");
 
-oldMask=umask((mode_t)0);
-printf("\n Old mask = %o",(int)oldMask);
+int main() {
+    int n;
+    clock_t start, end;
+    
+    printf("Enter number of students: ");
+    scanf("%d", &n);
+    Student students[n];
+    
+    printf("Enter student details (ID and Name):\n");
+    for (int i = 0; i < n; i++) {
+        printf("Student %d ID: ", i + 1);
+        scanf("%d", &students[i].id);
+        printf("Student %d Name: ", i + 1);
+        scanf("%s", students[i].name);
+    }
 
-if(oldMask & S_IROTH){
-printf("\nChanging Other read permission from Masked to unmasked.n");
-oldMask=(oldMask ^ S_IROTH);
-}
-newMask=(oldMask|S_IWOTH|S_IXOTH);
-umask(newMask);
-printf("\nNew MAsk = %o",(int)newMask);
-printf("\nThe file mode creation mask now specifies:");
-printf("\n  Other read permission  UNMASKED");
-printf("\n  Other write permission  MASKED");
-printf("\n  Other execute permission  MASKED");
+    start = clock();
+    mergeSort(students, 0, n - 1);
+    end = clock();
+
+    printf("Sorted student details by ID:\n");
+    for (int i = 0; i < n; i++)
+        printf("ID: %d, Name: %s\n", students[i].id, students[i].name);
+
+    printf("Time taken to sort: %f seconds\n", ((double) (end - start)) / CLOCKS_PER_SEC);
+
+    return 0;
 }
