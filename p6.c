@@ -1,45 +1,56 @@
-#include<stdio.h>
-#include<sys/types.h>
-#include<sys/stat.h>
-#include<time.h>
-#include<stdlib.h>
+#include <stdio.h>
+#include <time.h>
 
-int main(int argc, char *argv[])
-{
-struct stat sb;
-if(argc!=2)
-{
-fprintf(stderr,"usage: %s <pathname>\n", argv[0]);
-exit(EXIT_FAILURE);
-}
-if(stat(argv[1],&sb)==-1)
-{
-perror("stat");
-exit(EXIT_FAILURE);
+// Function to perform linear search
+int linearSearch(int arr[], int size, int key) {
+    for (int i = 0; i < size; i++) {
+        if (arr[i] == key) {
+            return i;
+        }
+    }
+    return -1;
 }
 
-printf("file type:          ");
-switch(sb.st_mode & S_IFMT)
-{
-case S_IFBLK: printf("block device file\n");  
-	      break;
-case S_IFCHR: printf("character device file\n");  
-	      break;
-case S_IFDIR: printf("directory\n");  
-	      break;
-case S_IFIFO: printf("FIFO/pipe\n");  
-	      break;
-case S_IFLNK: printf("symlink\n");  
-	      break;
-case S_IFREG: printf("regular file\n");  
-	      break;
-case S_IFSOCK: printf("socket\n");  
-	       break;
-default:       printf("regular file\n");  
-	       break;
-}
-printf("Inode number:   %ld\n", (long) sb.st_ino);
-printf("Mode:   %lo(octal)\n", (unsigned long) sb.st_mode);	
-printf("Blocks allocated:   %lld\n", (long long) sb.st_blocks);
-exit(EXIT_SUCCESS);
+int main() {
+    int size, key, result;
+    clock_t start, end;
+    double cpu_time_used;
+
+    // Input array size
+    printf("Enter the number of elements in the array: ");
+    scanf("%d", &size);
+
+    int arr[size];
+
+    // Input array elements
+    printf("Enter %d elements: ", size);
+    for (int i = 0; i < size; i++) {
+        scanf("%d", &arr[i]);
+    }
+
+    // Input the element to search for
+    printf("Enter the element to search: ");
+    scanf("%d", &key);
+
+    // Start time
+    start = clock();
+
+    // Perform linear search
+    result = linearSearch(arr, size, key);
+
+    // End time
+    end = clock();
+
+    // Calculate time taken
+    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+
+    if (result != -1) {
+        printf("Element found at index %d\n", result);
+    } else {
+        printf("Element not found in the array\n");
+    }
+
+    printf("Time taken to execute the search: %f seconds\n", cpu_time_used);
+
+    return 0;
 }
