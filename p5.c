@@ -1,27 +1,38 @@
-#include<stdlib.h>
-#include<unistd.h>
-#include<sys/types.h>
-#include<sys/stat.h>
-#include<fcntl.h>
+//DFS
 #include<stdio.h>
-int main(int argc,char **argv)
+
+int n,a[10][10],i,j,v[10],count=0;
+
+void dfs(int x)
 {
-int fd,nfd;
-if(argc<2){
-printf("usage:%s pathname\n",argv);
-exit(1);
+	count++;
+	v[x]=count;
+	if(v[x]!=0)
+		printf("%d\t",x);
+
+	int k;
+	for(k=1;k<=n;k++)
+		if(a[x][k]==1 && v[k]==0)
+			dfs(k);
+
 }
-if((fd=open(argv[1],O_WRONLY))<0)
+		
+
+void main()
 {
-perror("Problem in opening the file");
-exit(1);
-}
-if((nfd=fcntl(fd,F_DUPFD,0))==-1)
-{
-perror("Problem in duplicating fd");
-exit(1);
-}
-printf("Fd %d duplicated with %d\n",fd,nfd);
-close(fd);
-close(nfd);
+	printf("\nEnter no. of Nodes: ");
+	scanf("%d",&n);
+	printf("\nEnter the Adjacency Matrix:-\n");
+	for(i=1;i<=n;i++)
+		for(j=1;j<=n;j++)
+			scanf("%d",&a[i][j]);
+
+	for(i=1;i<=n;i++)
+		v[i]=0;
+	printf("\nDFS:\t");
+	for(i=1;i<=n;i++)
+		if(v[i]==0)
+			dfs(i);
+	printf("\n");
+
 }
