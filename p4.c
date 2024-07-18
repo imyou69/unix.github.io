@@ -1,43 +1,80 @@
-#include<stdio.h>
-#include<sys/types.h>
-#include<fcntl.h>
-#include<stdlib.h>
-int main(int argc, char *argv[])
-{
-int accmode,val;
-if(argc!=2)
-{
-fprintf(stderr,"usage:%s <description>",argv[0]);
-exit(1);
-}
-val=fcntl(atoi(argv[1]),F_GETFL,0); /* F_GETFL (void)
-              Return (as the function result) the file access mode and the
-              file status flags;*/
-if(val<0)
-{
-perror("fcntl error for fd");
-exit(1);
-}
-accmode=val & O_ACCMODE; /*This macro stands for a mask that can be bitwise-ANDed with the file status flag value to produce a value representing the file access mode. The mode will be O_RDONLY, O_WRONLY, or O_RDWR.*/
+#include <stdio.h>
+#include <stdlib.h>
+#include<time.h>
 
-if(accmode==O_RDONLY)
-printf("read only");
-else if(accmode==O_WRONLY) 
-printf("Write only");
-else if(accmode==O_RDWR)
-printf("read write");
-else
-{
-fprintf(stderr,"unknown access mode");
-exit(1);
-}
-if(val & O_APPEND)
-printf(",append");
-if(val & O_NONBLOCK)
-printf(",nonblocking");
-if(val & O_SYNC)
-printf(",synchronous write"); /*wait for writes to complete (data and attributes)*/
-putchar('\n');
-exit(0);
+#define MAX_VERTICES 100
 
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Node* createNode(int data)
+{
+    struct Node* newNode
+        = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void addEdge(struct Node* adjList[], int u, int v)
+{
+    struct Node* newNode = createNode(v);
+    newNode->next = adjList[u];
+    adjList[u] = newNode;
+}
+
+void bfs(struct Node* adjList[], int vertices,
+         int startNode, int visited[])
+{
+
+ int queue[MAX_VERTICES];
+    int front = 0, rear = 0;
+
+visited[startNode] = 1;
+    queue[rear++] = startNode;
+
+while (front != rear) {
+
+ int currentNode = queue[front++];
+        printf("%d ", currentNode);
+
+struct Node* temp = adjList[currentNode];
+        while (temp != NULL) {
+            int neighbor = temp->data;
+            if (!visited[neighbor]) {
+                visited[neighbor] = 1;
+                queue[rear++] = neighbor;
+            }
+            temp = temp->next;
+        }
+    }
+}
+
+int main()
+{
+clock_t start, end;
+int vertices = 5;
+start=clock();
+struct Node* adjList[vertices];
+    for (int i = 0; i < vertices; ++i)
+        adjList[i] = NULL;
+
+  addEdge(adjList, 200, 100);
+    addEdge(adjList, 200, 300);
+    addEdge(adjList, 100, 400);
+    addEdge(adjList, 100, 500);
+    addEdge(adjList, 300, 500);
+
+int visited[vertices];
+    for (int i = 0; i < vertices; ++i)
+        visited[i] = 0;
+
+ printf(
+        "Breadth First Traversal starting from vertex 0: ");
+    bfs(adjList, vertices, 0, visited);
+end=clock();
+printf("time taken to perform bfs : %f",(double)(end-start)/CLOCKS_PER_SEC);
+    return 0;
 }
