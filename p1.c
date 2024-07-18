@@ -1,22 +1,40 @@
-#include<sys/types.h>
-#include<sys/stat.h>
-#include<stdio.h>
-#include<fcntl.h>
-main( int argc,char *argv[3] )
-{
-int fd,i;
-char buf[2];
-fd=open(argv[1],O_RDONLY,0777);
-if(fd==-1)
-{
-printf("file open error");
+#include <stdio.h>
+
+void selectionSort(int *arr, int n) {
+    int i, j, min_index, temp;
+    
+    for (i = 0; i < n - 1; i++) {
+        min_index = i;
+        for (j = i + 1; j < n; j++) {
+           
+            if (*(arr + j) < *(arr + min_index)) {
+                min_index = j;
+            }
+        }
+        
+        temp = *(arr + min_index);
+        *(arr + min_index) = *(arr + i);
+        *(arr + i) = temp;
+    }
 }
-else
-{
-while((i=read(fd,buf,1))>0)
-{
-printf("%c",buf[0]);
-}
-close(fd);
-}
+
+int main() {
+    int arr[] = {64, 25, 12, 22, 11};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    
+    printf("Original array: ");
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+    
+    selectionSort(arr, n);
+    
+    printf("Sorted array: ");
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+    
+    return 0;
 }
